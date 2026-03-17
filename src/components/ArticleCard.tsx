@@ -44,10 +44,10 @@ export default function ArticleCard({
         href={article.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex flex-col sm:flex-col flex-row bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700"
+        className="group flex flex-row sm:flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700"
       >
-        {/* Image with echo badge overlay */}
-        <div className="relative aspect-[4/3] sm:aspect-video w-28 sm:w-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-700">
+        {/* Image — clean on mobile, overlays on desktop */}
+        <div className="relative w-24 sm:w-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-700 sm:aspect-video">
           {article.imageUrl && !imgError ? (
             <img
               src={article.imageUrl}
@@ -61,11 +61,11 @@ export default function ArticleCard({
               <span className="text-3xl text-gray-300 dark:text-gray-600">&#9993;</span>
             </div>
           )}
-          {/* Echo badge — top left */}
+          {/* Echo badge — desktop only overlay */}
           <div
             role="button"
             tabIndex={0}
-            className={`absolute top-2 left-2 ${badgeBg} backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform shadow-lg`}
+            className={`hidden sm:flex absolute top-2 left-2 ${badgeBg} backdrop-blur-sm rounded-lg px-2 py-1 items-center gap-1.5 cursor-pointer hover:scale-105 transition-transform shadow-lg`}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -81,13 +81,13 @@ export default function ArticleCard({
           >
             <SourceMeter score={article.echoScore} sourceCount={article.echoSources.length} />
           </div>
-          {/* Time — top right */}
-          <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-md px-1.5 py-0.5">
+          {/* Time — desktop only overlay */}
+          <div className="hidden sm:block absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-md px-1.5 py-0.5">
             <span className="text-[10px] font-medium text-white">
               {timeAgo(article.pubDate)}
             </span>
           </div>
-          {/* Bias strip — bottom of image (hidden on mobile) */}
+          {/* Bias strip — desktop only */}
           {article.echoScore > 1 && (
             <div
               role="button"
@@ -110,15 +110,40 @@ export default function ArticleCard({
             </div>
           )}
         </div>
-        <div className="flex flex-col flex-1 p-2.5 sm:p-4">
-          <div className="mb-1 sm:mb-2">
+        <div className="flex flex-col flex-1 p-2.5 sm:p-4 min-w-0">
+          {/* Mobile: source + time + meter inline */}
+          <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
             <span className="text-[10px] sm:text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
               {article.source}
             </span>
+            <span className="text-[10px] text-gray-400 sm:hidden">·</span>
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 sm:hidden">
+              {timeAgo(article.pubDate)}
+            </span>
           </div>
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2 line-clamp-2 sm:line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {article.title}
           </h3>
+          {/* Mobile: meter below title */}
+          <div
+            role="button"
+            tabIndex={0}
+            className={`sm:hidden inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm rounded-md px-1.5 py-0.5 w-fit cursor-pointer`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openModal();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                e.stopPropagation();
+                openModal();
+              }
+            }}
+          >
+            <SourceMeter score={article.echoScore} sourceCount={article.echoSources.length} compact />
+          </div>
           <p className="hidden sm:block text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
             {article.description}
           </p>
