@@ -41,7 +41,7 @@ function buildClusters(articles: Article[]): StoryCluster[] {
 
     const cluster = clusterMap.get(key)!;
 
-    // Avoid duplicate sources in cluster
+    // Add the main article as a source
     if (!cluster.sources.find((s) => s.source === article.source)) {
       cluster.sources.push({
         source: article.source,
@@ -51,6 +51,19 @@ function buildClusters(articles: Article[]): StoryCluster[] {
         description: article.description,
         imageUrl: article.imageUrl,
       });
+    }
+
+    // Also pull in relatedArticles (dedup folds cluster members here)
+    for (const rel of article.relatedArticles) {
+      if (!cluster.sources.find((s) => s.source === rel.source)) {
+        cluster.sources.push({
+          source: rel.source,
+          title: rel.title,
+          link: rel.link,
+          pubDate: rel.pubDate,
+          description: rel.description,
+        });
+      }
     }
 
     // Use first available image
@@ -83,7 +96,7 @@ const SCORE_COLORS: Record<number, string> = {
   2: "bg-amber-400",
   3: "bg-blue-400",
   4: "bg-green-400",
-  5: "bg-emerald-500",
+  5: "bg-red-500",
 };
 
 function ThumbnailImg({ src, alt }: { src?: string; alt: string }) {
@@ -176,7 +189,7 @@ export default function CatchUpPage() {
               2: "bg-amber-500",
               3: "bg-blue-500",
               4: "bg-green-500",
-              5: "bg-emerald-500",
+              5: "bg-red-500",
             }[cluster.echoScore] || "bg-gray-500";
 
             return (

@@ -2,6 +2,25 @@
 
 import { useState } from "react";
 import { Article, CATEGORY_COLORS } from "@/lib/types";
+import SourceMeter from "./SourceMeter";
+
+const INLINE_COLORS: Record<number, string> = {
+  1: "bg-gray-400 dark:bg-gray-500",
+  2: "bg-amber-400 dark:bg-amber-300",
+  3: "bg-sky-400 dark:bg-sky-300",
+  4: "bg-lime-400 dark:bg-lime-300",
+  5: "bg-red-400 dark:bg-red-300",
+};
+
+function MiniMeter({ score }: { score: number }) {
+  const pct = (score / 5) * 100;
+  const color = INLINE_COLORS[score] || INLINE_COLORS[1];
+  return (
+    <div className="w-8 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+    </div>
+  );
+}
 
 interface HeatMapTileProps {
   article: Article;
@@ -23,7 +42,7 @@ const BADGE_BG: Record<number, string> = {
   2: "bg-amber-500/90",
   3: "bg-blue-500/90",
   4: "bg-green-500/90",
-  5: "bg-emerald-500/90",
+  5: "bg-red-600/95 ring-2 ring-red-400/60 shadow-[0_0_12px_rgba(239,68,68,0.6)]",
 };
 
 export default function HeatMapTile({
@@ -58,15 +77,8 @@ export default function HeatMapTile({
             </div>
           )}
           {/* Echo badge */}
-          <div className={`absolute top-2 left-2 ${badgeBg} backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1.5 shadow-lg`}>
-            <div className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className={`w-2 h-2 rounded-full ${i < article.echoScore ? "bg-white" : "bg-white/30"}`} />
-              ))}
-            </div>
-            <span className="text-[11px] font-semibold text-white">
-              {article.echoScore === 1 ? "1 source" : `${article.echoScore} sources`}
-            </span>
+          <div className={`absolute top-2 left-2 ${badgeBg} backdrop-blur-sm rounded-lg px-2 py-1 shadow-lg`}>
+            <SourceMeter score={article.echoScore} sourceCount={article.echoSources.length} />
           </div>
           {/* Time */}
           <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-md px-1.5 py-0.5">
@@ -124,10 +136,8 @@ export default function HeatMapTile({
               <span className="text-[10px] text-gray-400 dark:text-gray-500">
                 {timeAgo(article.pubDate)}
               </span>
-              <div className="flex items-center gap-0.5 ml-auto">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < article.echoScore ? (BADGE_BG[article.echoScore] || "bg-gray-400").replace("/90", "").replace("/80", "") : "bg-gray-200 dark:bg-gray-700"}`} />
-                ))}
+              <div className="ml-auto">
+                <MiniMeter score={article.echoScore} />
               </div>
             </div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -148,11 +158,7 @@ export default function HeatMapTile({
       className={`group block rounded-lg border border-gray-100 dark:border-gray-700 border-l-4 ${borderColor} bg-white dark:bg-gray-800 px-3 py-2.5 hover:shadow-sm transition-shadow h-full`}
     >
       <div className="flex items-center gap-1.5 mb-1">
-        <div className="flex items-center gap-0.5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className={`w-1 h-1 rounded-full ${i < article.echoScore ? "bg-gray-400" : "bg-gray-200 dark:bg-gray-700"}`} />
-          ))}
-        </div>
+        <MiniMeter score={article.echoScore} />
         <span className="text-[10px] font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           {article.source}
         </span>

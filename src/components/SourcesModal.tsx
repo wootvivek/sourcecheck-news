@@ -28,9 +28,9 @@ function timeAgo(dateStr: string): string {
 const SCORE_COLORS: Record<number, string> = {
   1: "bg-gray-400",
   2: "bg-amber-400",
-  3: "bg-blue-400",
-  4: "bg-green-400",
-  5: "bg-emerald-500",
+  3: "bg-sky-500",
+  4: "bg-lime-500",
+  5: "bg-red-500",
 };
 
 type Tab = "sources" | "perspectives";
@@ -79,19 +79,15 @@ export default function SourcesModal({
         {/* Header */}
         <div className="px-5 pt-5 pb-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-2.5 h-2.5 rounded-full ${
-                      i < echoScore ? dotColor : "bg-gray-200 dark:bg-gray-600"
-                    }`}
-                  />
-                ))}
+            <div className="flex items-center gap-2.5">
+              <div className="w-20 h-2.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${dotColor}`}
+                  style={{ width: `${(echoScore / 5) * 100}%` }}
+                />
               </div>
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                SourceCheck Score: {echoScore}/5
+                SourceCheck Score: {allSources.length > 5 ? `${allSources.length}` : echoScore}/5
               </span>
             </div>
             <button
