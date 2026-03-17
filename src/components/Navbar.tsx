@@ -6,7 +6,7 @@ import ThemeToggle from "./ThemeToggle";
 
 function NavDog() {
   return (
-    <svg width="52" height="52" viewBox="0 0 120 120" fill="none" className="select-none">
+    <svg width="68" height="68" viewBox="0 0 120 120" fill="none" className="select-none">
       {/* Body */}
       <ellipse cx="55" cy="80" rx="22" ry="16" className="fill-amber-300 dark:fill-amber-400" />
       {/* Back legs */}
@@ -47,7 +47,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="flex items-center gap-0.5 shrink-0">
           <NavDog />
           <div className="flex flex-col">
             <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
