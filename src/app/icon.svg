@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 120 120" fill="none">
+  <!-- Body -->
+  <ellipse cx="55" cy="80" rx="22" ry="16" fill="#fcd34d"/>
+  <!-- Back legs -->
+  <rect x="38" y="88" width="7" height="16" rx="3.5" fill="#fcd34d"/>
+  <rect x="58" y="88" width="7" height="16" rx="3.5" fill="#fcd34d"/>
+  <!-- Front legs -->
+  <rect x="68" y="72" width="6" height="18" rx="3" fill="#fcd34d" transform="rotate(-15 71 81)"/>
+  <rect x="78" y="72" width="6" height="18" rx="3" fill="#fcd34d" transform="rotate(15 81 81)"/>
+  <!-- Head -->
+  <circle cx="75" cy="58" r="18" fill="#fcd34d"/>
+  <!-- Ears -->
+  <ellipse cx="60" cy="44" rx="6" ry="10" fill="#fbbf24" transform="rotate(-20 60 44)"/>
+  <ellipse cx="90" cy="44" rx="6" ry="10" fill="#fbbf24" transform="rotate(20 90 44)"/>
+  <!-- Inner ears -->
+  <ellipse cx="60" cy="44" rx="3" ry="6" fill="#fde68a" transform="rotate(-20 60 44)"/>
+  <ellipse cx="90" cy="44" rx="3" ry="6" fill="#fde68a" transform="rotate(20 90 44)"/>
+  <!-- Snout -->
+  <ellipse cx="75" cy="64" rx="10" ry="7" fill="#fde68a"/>
+  <!-- Nose -->
+  <ellipse cx="75" cy="61" rx="4" ry="3" fill="#1f2937"/>
+  <!-- Mouth -->
+  <path d="M 72 65 Q 75 68 78 65" stroke="#374151" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Eyes -->
+  <circle cx="67" cy="53" r="3" fill="#1f2937"/>
+  <circle cx="83" cy="53" r="3" fill="#1f2937"/>
+  <!-- Eye highlights -->
+  <circle cx="66" cy="52" r="1" fill="white" opacity="0.8"/>
+  <circle cx="82" cy="52" r="1" fill="white" opacity="0.8"/>
+  <!-- Belly spot -->
+  <ellipse cx="55" cy="82" rx="10" ry="8" fill="#fde68a" opacity="0.5"/>
+</svg>

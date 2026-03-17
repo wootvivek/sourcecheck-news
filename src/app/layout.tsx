@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "SourceCheck.News",
   description: "See how many sources report the same story",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
