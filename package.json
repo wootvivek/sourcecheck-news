@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/kv": "^3.0.0",
     "next": "^16.1.7",
     "next-themes": "^0.3.0",
     "react": "^18.3.0",
