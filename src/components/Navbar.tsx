@@ -6,7 +6,7 @@ import ThemeToggle from "./ThemeToggle";
 
 function NavDog() {
   return (
-    <svg width="36" height="36" viewBox="0 0 120 120" fill="none" className="select-none">
+    <svg width="52" height="52" viewBox="0 0 120 120" fill="none" className="select-none">
       {/* Body */}
       <ellipse cx="55" cy="80" rx="22" ry="16" className="fill-amber-300 dark:fill-amber-400" />
       {/* Back legs */}
