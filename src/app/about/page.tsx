@@ -101,6 +101,10 @@ export default function AboutPage() {
           &larr; Back to news
         </Link>
       </div>
+
+      <p className="mt-8 text-center text-[11px] text-gray-300 dark:text-gray-700">
+        v1.1
+      </p>
     </div>
   );
 }
