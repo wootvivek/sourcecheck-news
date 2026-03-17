@@ -49,12 +49,36 @@ const STOPWORDS = new Set([
   "during","while","between","each","every","both","few","because",
 ]);
 
+// Basic stemmer: strip common suffixes for better matching
+function stem(word: string): string {
+  if (word.length <= 3) return word;
+  return word
+    .replace(/ies$/, "y")
+    .replace(/ves$/, "f")
+    .replace(/(ing|tion|sion|ment|ness|ous|ive|able|ible|ful|less|ated|ting)$/, "")
+    .replace(/(?<=[a-z]{3})s$/, "")
+    .replace(/(?<=[a-z]{3})ed$/, "")
+    .replace(/(?<=[a-z]{3})er$/, "")
+    .replace(/'s?$/, "");
+}
+
 function tokenize(text: string): string[] {
-  return text
+  const words = text
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w.length > 2 && !STOPWORDS.has(w));
+
+  // Stem all words
+  const stemmed = words.map(stem).filter((w) => w.length > 2);
+
+  // Add bigrams for better phrase matching (e.g. "donald_trump", "climate_change")
+  const bigrams: string[] = [];
+  for (let i = 0; i < stemmed.length - 1; i++) {
+    bigrams.push(`${stemmed[i]}_${stemmed[i + 1]}`);
+  }
+
+  return [...stemmed, ...bigrams];
 }
 
 interface TfIdfVector {
@@ -65,7 +89,7 @@ interface TfIdfVector {
 function buildTfIdfVectors(articles: Article[]): TfIdfVector[] {
   // Step 1: Tokenize all documents
   const docs = articles.map((a) =>
-    tokenize(`${a.title} ${a.title} ${a.description}`) // title weighted 2x
+    tokenize(`${a.title} ${a.title} ${a.title} ${a.description}`) // title weighted 3x
   );
 
   // Step 2: Compute document frequency for each term
@@ -120,7 +144,7 @@ function cosineSimilarity(a: TfIdfVector, b: TfIdfVector): number {
   return dot / (a.norm * b.norm);
 }
 
-const SIMILARITY_THRESHOLD = 0.25;
+const SIMILARITY_THRESHOLD = 0.35;
 const TIME_WINDOW_HOURS = 48;
 
 function clusterArticles(articles: Article[]): void {
@@ -129,7 +153,7 @@ function clusterArticles(articles: Article[]): void {
   const vectors = buildTfIdfVectors(articles);
   const timestamps = articles.map((a) => new Date(a.pubDate).getTime());
 
-  // Greedy clustering: assign each article to best matching cluster
+  // Greedy clustering: compare against ALL cluster members (avg similarity)
   const clusters: number[][] = [];
 
   for (let i = 0; i < articles.length; i++) {
@@ -137,19 +161,27 @@ function clusterArticles(articles: Article[]): void {
     let bestSim = 0;
 
     for (let c = 0; c < clusters.length; c++) {
+      // Time gate: check against cluster centroid (first article)
       const rep = clusters[c][0];
-
-      // Time gate
       const hoursDiff =
         Math.abs(timestamps[i] - timestamps[rep]) / (1000 * 60 * 60);
       if (hoursDiff > TIME_WINDOW_HOURS) continue;
 
-      // Skip if same source (echo requires different sources)
-      if (articles[i].source === articles[rep].source) continue;
+      // Compare against all members and take average similarity
+      let totalSim = 0;
+      let comparisons = 0;
+      for (const j of clusters[c]) {
+        // Skip same source
+        if (articles[i].source === articles[j].source) continue;
+        totalSim += cosineSimilarity(vectors[i], vectors[j]);
+        comparisons++;
+      }
 
-      const sim = cosineSimilarity(vectors[i], vectors[rep]);
-      if (sim > SIMILARITY_THRESHOLD && sim > bestSim) {
-        bestSim = sim;
+      if (comparisons === 0) continue;
+      const avgSim = totalSim / comparisons;
+
+      if (avgSim > SIMILARITY_THRESHOLD && avgSim > bestSim) {
+        bestSim = avgSim;
         bestCluster = c;
       }
     }
@@ -161,8 +193,43 @@ function clusterArticles(articles: Article[]): void {
     }
   }
 
+  // Second pass: aggressively merge clusters that share any strong similarity
+  // Uses lower threshold + max similarity (one strong match is enough to merge)
+  const MERGE_THRESHOLD = 0.28;
+  let merged = true;
+  while (merged) {
+    merged = false;
+    for (let a = 0; a < clusters.length; a++) {
+      if (clusters[a].length === 0) continue;
+      for (let b = a + 1; b < clusters.length; b++) {
+        if (clusters[b].length === 0) continue;
+
+        // Compare representative articles from each cluster
+        let maxSim = 0;
+        const sampleA = clusters[a].slice(0, 5);
+        const sampleB = clusters[b].slice(0, 5);
+        for (const ia of sampleA) {
+          for (const ib of sampleB) {
+            if (articles[ia].source === articles[ib].source) continue;
+            const sim = cosineSimilarity(vectors[ia], vectors[ib]);
+            if (sim > maxSim) maxSim = sim;
+          }
+        }
+
+        if (maxSim > MERGE_THRESHOLD) {
+          clusters[a].push(...clusters[b]);
+          clusters[b] = [];
+          merged = true;
+        }
+      }
+    }
+  }
+
+  // Remove empty clusters from merging
+  const finalClusters = clusters.filter((c) => c.length > 0);
+
   // Assign scores and related articles
-  for (const cluster of clusters) {
+  for (const cluster of finalClusters) {
     const uniqueSources = [...new Set(cluster.map((i) => articles[i].source))];
     const score = Math.min(uniqueSources.length, 5);
 
