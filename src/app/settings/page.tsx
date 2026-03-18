@@ -152,7 +152,7 @@ export default function SettingsPage() {
               Categories
             </label>
             <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => {
+              {CATEGORIES.filter((c) => c.slug !== "local").map((cat) => {
                 const hidden = settings.hiddenCategories.includes(cat.slug);
                 return (
                   <button

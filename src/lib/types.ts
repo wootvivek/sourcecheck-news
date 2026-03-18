@@ -29,7 +29,8 @@ export type Category =
   | "entertainment"
   | "health"
   | "politics"
-  | "opinion";
+  | "opinion"
+  | "local";
 
 export interface CategoryInfo {
   slug: Category;
@@ -48,6 +49,7 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   science: "border-l-cyan-500",
   entertainment: "border-l-yellow-500",
   opinion: "border-l-gray-500",
+  local: "border-l-emerald-500",
 };
 
 export const CATEGORIES: CategoryInfo[] = [
@@ -60,4 +62,5 @@ export const CATEGORIES: CategoryInfo[] = [
   { slug: "science", label: "Science" },
   { slug: "entertainment", label: "Entertainment" },
   { slug: "opinion", label: "Opinion" },
+  { slug: "local", label: "Local" },
 ];

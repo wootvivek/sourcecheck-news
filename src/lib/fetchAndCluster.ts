@@ -134,7 +134,7 @@ const SIMILARITY_THRESHOLD = 0.35;
 const TIME_WINDOW_HOURS = 48;
 const MAX_MERGE_ITERATIONS = 10;
 
-function clusterArticles(articles: Article[]): void {
+export function clusterArticles(articles: Article[]): void {
   if (articles.length === 0) return;
 
   const vectors = buildTfIdfVectors(articles);
@@ -258,7 +258,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
-async function fetchFeed(
+export async function fetchFeed(
   url: string,
   name: string,
   category: Category

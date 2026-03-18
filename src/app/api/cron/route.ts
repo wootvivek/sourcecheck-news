@@ -22,8 +22,9 @@ export async function GET(request: NextRequest) {
     // Store all articles
     await kv.set("feeds:all", JSON.stringify(allArticles), { ex: 900 }); // 15 min TTL
 
-    // Store per-category slices
+    // Store per-category slices (skip "local" — it's per-user, not pre-computed)
     for (const cat of CATEGORIES) {
+      if (cat.slug === "local") continue;
       const catArticles = allArticles.filter((a) => a.category === cat.slug);
       await kv.set(`feeds:${cat.slug}`, JSON.stringify(catArticles), { ex: 900 });
     }

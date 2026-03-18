@@ -21,17 +21,20 @@ export default function CategoryPills() {
       </Link>
       {CATEGORIES.map((cat) => {
         const active = pathname === `/category/${cat.slug}`;
+        const isLocal = cat.slug === "local";
         return (
           <Link
             key={cat.slug}
             href={`/category/${cat.slug}`}
             className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               active
-                ? "bg-blue-600 text-white"
+                ? isLocal
+                  ? "bg-emerald-600 text-white"
+                  : "bg-blue-600 text-white"
                 : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
-            {cat.label}
+            {isLocal ? "📍 " : ""}{cat.label}
           </Link>
         );
       })}

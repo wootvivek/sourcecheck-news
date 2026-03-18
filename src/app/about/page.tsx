@@ -82,6 +82,57 @@ export default function AboutPage() {
 
         <hr className="border-gray-200 dark:border-gray-700" />
 
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white pt-2">
+          Features
+        </h2>
+
+        <ul className="space-y-3 text-[15px]">
+          <li className="flex gap-2">
+            <span className="shrink-0">📊</span>
+            <span><strong className="text-gray-900 dark:text-white">Source Scoring</strong> — Every story scored 1&ndash;5 based on how many independent newsrooms are covering it</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🏛️</span>
+            <span><strong className="text-gray-900 dark:text-white">Bias Dial</strong> — See the political spectrum of sources behind each story at a glance</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">📍</span>
+            <span><strong className="text-gray-900 dark:text-white">Local News</strong> — Location-based local coverage using GPS or manual city entry</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔇</span>
+            <span><strong className="text-gray-900 dark:text-white">Quiet Corner</strong> — Stories only one outlet is reporting — sometimes noise, sometimes tomorrow&apos;s headlines</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🗂️</span>
+            <span><strong className="text-gray-900 dark:text-white">10 Categories</strong> — World, Politics, Tech, Business, Health, Sports, Science, Entertainment, Opinion, and Local</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔥</span>
+            <span><strong className="text-gray-900 dark:text-white">Heat Map View</strong> — Visual grid that highlights the most-covered stories by color intensity</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">⚙️</span>
+            <span><strong className="text-gray-900 dark:text-white">Customizable Settings</strong> — Default sort, minimum source threshold, hidden categories, and theme — all saved locally</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">📰</span>
+            <span><strong className="text-gray-900 dark:text-white">196+ Sources</strong> — Curated outlets with transparent{" "}
+              <Link href="/sources" className="text-blue-600 dark:text-blue-400 hover:underline">bias ratings</Link>
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔍</span>
+            <span><strong className="text-gray-900 dark:text-white">Search</strong> — Find stories across all sources and categories instantly</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🌙</span>
+            <span><strong className="text-gray-900 dark:text-white">Dark Mode</strong> — Light, dark, or system-matched theme</span>
+          </li>
+        </ul>
+
+        <hr className="border-gray-200 dark:border-gray-700" />
+
         <p>
           Built by Vivek. Free, independent, no ads, no tracking.{" "}
           <a
@@ -103,7 +154,7 @@ export default function AboutPage() {
       </div>
 
       <p className="mt-8 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v1.8
+        v2.0
       </p>
     </div>
   );

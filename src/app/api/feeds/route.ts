@@ -1,11 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { kv } from "@vercel/kv";
 import { fetchAndClusterAll } from "@/lib/fetchAndCluster";
+import { fetchLocalNews } from "@/lib/localFeeds";
 import { Category } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category") as Category | null;
+
+  // Local news: per-user, requires city param, no KV cache
+  if (category === "local") {
+    const city = searchParams.get("city");
+    if (!city) {
+      return NextResponse.json(
+        { error: "city parameter required for local news" },
+        { status: 400 }
+      );
+    }
+
+    const articles = await fetchLocalNews(city);
+    return NextResponse.json(articles, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=300",
+        "X-Source": "live-fetch-local",
+      },
+    });
+  }
+
   const kvKey = category ? `feeds:${category}` : "feeds:all";
 
   // Try reading from KV cache first (instant)

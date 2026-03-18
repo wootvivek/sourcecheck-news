@@ -60,8 +60,14 @@ function deduplicateClusters(articles: Article[]): Article[] {
   return articles.filter((a) => !hideIds.has(a.id));
 }
 
-export function useArticles(category?: Category) {
-  const url = category ? `/api/feeds?category=${category}` : "/api/feeds";
+export function useArticles(category?: Category, city?: string) {
+  const url = category === "local"
+    ? city
+      ? `/api/feeds?category=local&city=${encodeURIComponent(city)}`
+      : null // Don't fetch until city is available
+    : category
+      ? `/api/feeds?category=${category}`
+      : "/api/feeds";
 
   const { data, error, isLoading, mutate } = useSWR<Article[]>(url, fetcher, {
     revalidateOnFocus: false,
