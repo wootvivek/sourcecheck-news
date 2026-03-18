@@ -11,7 +11,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center shrink-0">
           <div className="flex flex-col">
             <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
-            <Link href="/about" className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onClick={(e) => e.stopPropagation()}>One source is a rumor. Multiple sources is news.</Link>
+            <Link href="/about" className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onClick={(e) => e.stopPropagation()}>See how many sources agree before you believe.</Link>
           </div>
         </Link>
         <div className="flex items-center gap-2">

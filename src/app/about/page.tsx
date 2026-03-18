@@ -61,7 +61,7 @@ export default function AboutPage() {
           SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span>
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
-          One source is a rumor. Multiple sources is news.
+          See how many sources agree before you believe.
         </p>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Article } from "@/lib/types";
-import BiasSpectrum from "./BiasSpectrum";
+import BiasDial from "./BiasDial";
 import SourceMeter from "./SourceMeter";
 import SourcesModal from "./SourcesModal";
 
@@ -87,12 +87,12 @@ export default function ArticleCard({
               {timeAgo(article.pubDate)}
             </span>
           </div>
-          {/* Bias strip — desktop only */}
+          {/* Bias dial — desktop only, bottom right */}
           {article.echoScore > 1 && (
             <div
               role="button"
               tabIndex={0}
-              className="hidden sm:block absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm px-3 py-1.5 cursor-pointer hover:bg-black/50 transition-colors"
+              className="hidden sm:flex absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm rounded-lg p-1 cursor-pointer hover:bg-black/60 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -106,7 +106,7 @@ export default function ArticleCard({
                 }
               }}
             >
-              <BiasSpectrum sources={article.echoSources} compact />
+              <BiasDial sources={article.echoSources} size={48} />
             </div>
           )}
         </div>
