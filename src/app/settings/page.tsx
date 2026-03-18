@@ -181,6 +181,36 @@ export default function SettingsPage() {
         </div>
       </section>
 
+      {/* Sources Link */}
+      <section className="mb-8">
+        <Link
+          href="/sources"
+          className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors group"
+        >
+          <div>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">
+              View All Sources
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              See all outlets, categories, and political bias ratings
+            </p>
+          </div>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="text-gray-400 group-hover:text-blue-500 transition-colors shrink-0"
+          >
+            <path
+              fillRule="evenodd"
+              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </Link>
+      </section>
+
       <div className="text-center">
         <Link
           href="/"
