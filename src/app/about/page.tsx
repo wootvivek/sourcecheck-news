@@ -85,10 +85,10 @@ export default function AboutPage() {
         <p>
           Built by Vivek. Free, independent, no ads, no tracking.{" "}
           <a
-            href="mailto:wootvivek@gmail.com"
+            href="mailto:wootishapps@outlook.com"
             className="text-blue-600 dark:text-blue-400 hover:underline"
           >
-            wootvivek@gmail.com
+            wootishapps@outlook.com
           </a>
         </p>
       </div>
@@ -103,7 +103,7 @@ export default function AboutPage() {
       </div>
 
       <p className="mt-8 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v1.7
+        v1.8
       </p>
     </div>
   );
