@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Article } from "@/lib/types";
 import ArticleCard from "./ArticleCard";
 import HeatMapGrid from "./HeatMapGrid";
 import TieredView from "./TieredView";
 import { useViewPreference } from "@/hooks/useViewPreference";
+import { useSettings } from "@/hooks/useSettings";
 import SortControl, { SortOption } from "./SortControl";
 import ViewToggle from "./ViewToggle";
 
@@ -15,20 +16,39 @@ interface ArticleGridProps {
 
 export default function ArticleGrid({ articles }: ArticleGridProps) {
   const { viewMode, setViewMode } = useViewPreference();
+  const { settings } = useSettings();
   const [sort, setSort] = useState<SortOption>("echo");
+  const [sortInitialized, setSortInitialized] = useState(false);
+
+  // Apply default sort from settings on first load
+  useEffect(() => {
+    if (!sortInitialized && settings.defaultSort) {
+      setSort(settings.defaultSort);
+      setSortInitialized(true);
+    }
+  }, [settings.defaultSort, sortInitialized]);
+
+  // Filter by settings: min score + hidden categories
+  const filtered = useMemo(() => {
+    return articles.filter((a) => {
+      if (a.echoScore < settings.minScore) return false;
+      if (settings.hiddenCategories.includes(a.category)) return false;
+      return true;
+    });
+  }, [articles, settings.minScore, settings.hiddenCategories]);
 
   const sorted = useMemo(() => {
     if (sort === "echo") {
-      return [...articles].sort((a, b) => {
+      return [...filtered].sort((a, b) => {
         const diff = b.echoScore - a.echoScore;
         if (diff !== 0) return diff;
         return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
       });
     }
-    return articles;
-  }, [articles, sort]);
+    return filtered;
+  }, [filtered, sort]);
 
-  if (articles.length === 0) {
+  if (filtered.length === 0) {
     return (
       <div className="text-center py-20 text-gray-400 dark:text-gray-500">
         <p className="text-lg">No articles found</p>
@@ -45,7 +65,7 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
 
       {sort === "tiered" ? (
         <TieredView
-          articles={articles}
+          articles={filtered}
           viewMode={viewMode}
         />
       ) : viewMode === "heatmap" ? (
