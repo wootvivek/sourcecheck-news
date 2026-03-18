@@ -124,25 +124,48 @@ export default function ArticleCard({
           <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {article.title}
           </h3>
-          {/* Mobile: meter below title */}
-          <div
-            role="button"
-            tabIndex={0}
-            className={`sm:hidden inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm rounded-md px-1.5 py-0.5 w-fit cursor-pointer`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openModal();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+          {/* Mobile: meter + bias dial row */}
+          <div className="sm:hidden flex items-end justify-between gap-2 mt-auto">
+            <div
+              role="button"
+              tabIndex={0}
+              className={`inline-flex items-center gap-1.5 ${badgeBg} backdrop-blur-sm rounded-md px-1.5 py-0.5 w-fit cursor-pointer`}
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 openModal();
-              }
-            }}
-          >
-            <SourceMeter score={article.echoScore} sourceCount={article.echoSources.length} compact />
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openModal();
+                }
+              }}
+            >
+              <SourceMeter score={article.echoScore} sourceCount={article.echoSources.length} compact />
+            </div>
+            {article.echoScore > 1 && (
+              <div
+                role="button"
+                tabIndex={0}
+                className="bg-black/50 backdrop-blur-sm rounded-md p-0.5 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openModal();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openModal();
+                  }
+                }}
+              >
+                <BiasDial sources={article.echoSources} size={36} />
+              </div>
+            )}
           </div>
           <p className="hidden sm:block text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
             {article.description}
