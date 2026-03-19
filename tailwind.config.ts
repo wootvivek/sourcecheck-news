@@ -27,6 +27,10 @@ const config: Config = {
           "0%, 100%": { opacity: "1", filter: "brightness(1)" },
           "50%": { opacity: "0.8", filter: "brightness(1.4)" },
         },
+        wag: {
+          "0%": { transform: "rotate(-8deg)" },
+          "100%": { transform: "rotate(12deg)" },
+        },
       },
     },
   },

@@ -4,15 +4,72 @@ import Link from "next/link";
 import SearchBar from "./SearchBar";
 import ThemeToggle from "./ThemeToggle";
 
+function NavDog() {
+  return (
+    <div className="relative group">
+      {/* Subtle glow behind dog on hover */}
+      <div className="absolute inset-0 bg-amber-300/0 group-hover:bg-amber-300/30 rounded-full blur-md transition-all duration-300" />
+      <svg
+        width="44"
+        height="44"
+        viewBox="0 0 120 120"
+        fill="none"
+        className="relative drop-shadow-sm group-hover:scale-110 transition-transform duration-300"
+      >
+        {/* Body */}
+        <ellipse cx="55" cy="80" rx="22" ry="16" className="fill-amber-300 dark:fill-amber-400" />
+        {/* Back legs */}
+        <rect x="38" y="88" width="7" height="16" rx="3.5" className="fill-amber-300 dark:fill-amber-400" />
+        <rect x="58" y="88" width="7" height="16" rx="3.5" className="fill-amber-300 dark:fill-amber-400" />
+        {/* Front legs */}
+        <rect x="68" y="72" width="6" height="18" rx="3" className="fill-amber-300 dark:fill-amber-400" transform="rotate(-15 71 81)" />
+        <rect x="78" y="72" width="6" height="18" rx="3" className="fill-amber-300 dark:fill-amber-400" transform="rotate(15 81 81)" />
+        {/* Head */}
+        <circle cx="75" cy="58" r="18" className="fill-amber-300 dark:fill-amber-400" />
+        {/* Ears */}
+        <ellipse cx="60" cy="44" rx="6" ry="10" className="fill-amber-400 dark:fill-amber-500" transform="rotate(-20 60 44)" />
+        <ellipse cx="90" cy="44" rx="6" ry="10" className="fill-amber-400 dark:fill-amber-500" transform="rotate(20 90 44)" />
+        {/* Inner ears */}
+        <ellipse cx="60" cy="44" rx="3" ry="6" className="fill-amber-200 dark:fill-amber-300" transform="rotate(-20 60 44)" />
+        <ellipse cx="90" cy="44" rx="3" ry="6" className="fill-amber-200 dark:fill-amber-300" transform="rotate(20 90 44)" />
+        {/* Snout */}
+        <ellipse cx="75" cy="64" rx="10" ry="7" className="fill-amber-200 dark:fill-amber-300" />
+        {/* Nose */}
+        <ellipse cx="75" cy="61" rx="4" ry="3" className="fill-gray-800 dark:fill-gray-900" />
+        {/* Mouth */}
+        <path d="M 72 65 Q 75 68 78 65" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        {/* Eyes — bright and friendly */}
+        <circle cx="67" cy="53" r="3.5" className="fill-gray-800 dark:fill-gray-900" />
+        <circle cx="83" cy="53" r="3.5" className="fill-gray-800 dark:fill-gray-900" />
+        {/* Eye sparkle */}
+        <circle cx="65.5" cy="51.5" r="1.5" fill="white" opacity="0.9" />
+        <circle cx="81.5" cy="51.5" r="1.5" fill="white" opacity="0.9" />
+        {/* Belly spot */}
+        <ellipse cx="55" cy="82" rx="10" ry="8" className="fill-amber-200 dark:fill-amber-300" opacity="0.5" />
+        {/* Tail — wagging with CSS animation */}
+        <path
+          d="M 35 75 Q 18 55 25 42"
+          stroke="currentColor"
+          strokeWidth="4"
+          strokeLinecap="round"
+          fill="none"
+          className="text-amber-400 dark:text-amber-300 origin-[35px_75px] group-hover:animate-[wag_0.3s_ease-in-out_infinite_alternate]"
+        />
+      </svg>
+    </div>
+  );
+}
+
 export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href="/" className="flex items-center gap-1 shrink-0 group/brand">
+            <NavDog />
             <div className="flex flex-col">
               <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
-              <Link href="/about" className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wide hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onClick={(e) => e.stopPropagation()}>See how many sources agree before you believe.</Link>
+              <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium tracking-wide group-hover/brand:text-blue-500 transition-colors">See how many sources agree before you believe.</span>
             </div>
           </Link>
           <div className="flex items-center gap-2">
