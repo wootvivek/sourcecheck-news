@@ -67,19 +67,21 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-1 shrink-0 group/brand">
-            <NavDog />
-            <div className="flex flex-col">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
+          <Link href="/" className="flex items-center gap-1 min-w-0 group/brand">
+            <div className="shrink-0">
+              <NavDog />
+            </div>
+            <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
+                <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white leading-tight truncate">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
                 {streak.currentStreak > 1 && (
-                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full" title={`${streak.currentStreak}-day streak! Longest: ${streak.longestStreak}`}>
+                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full shrink-0" title={`${streak.currentStreak}-day streak! Longest: ${streak.longestStreak}`}>
                     🔥 {streak.currentStreak}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium tracking-wide group-hover/brand:text-blue-500 transition-colors">See how many sources agree before you believe.</span>
+              <span className="hidden sm:block text-[10px] text-gray-400 dark:text-gray-500 font-medium tracking-wide group-hover/brand:text-blue-500 transition-colors">See how many sources agree before you believe.</span>
             </div>
           </Link>
           <div className="flex items-center gap-1 sm:gap-2">
