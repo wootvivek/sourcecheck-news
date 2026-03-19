@@ -8,6 +8,8 @@ import SourcesModal from "./SourcesModal";
 
 interface ArticleCardProps {
   article: Article;
+  isBookmarked?: boolean;
+  onToggleBookmark?: () => void;
 }
 
 function timeAgo(dateStr: string): string {
@@ -22,6 +24,8 @@ function timeAgo(dateStr: string): string {
 
 export default function ArticleCard({
   article,
+  isBookmarked = false,
+  onToggleBookmark,
 }: ArticleCardProps) {
   const [showModal, setShowModal] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -87,6 +91,31 @@ export default function ArticleCard({
               {timeAgo(article.pubDate)}
             </span>
           </div>
+          {/* Bookmark — desktop only, bottom left */}
+          {onToggleBookmark && (
+            <div
+              role="button"
+              tabIndex={0}
+              className="hidden sm:flex absolute bottom-2 left-2 bg-black/50 backdrop-blur-sm rounded-lg w-8 h-8 items-center justify-center cursor-pointer hover:bg-black/60 transition-colors z-10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggleBookmark();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleBookmark();
+                }
+              }}
+              title={isBookmarked ? "Remove bookmark" : "Save for later"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+          )}
           {/* Bias dial — desktop only, bottom right */}
           {article.echoScore > 1 && (
             <div
@@ -111,7 +140,7 @@ export default function ArticleCard({
           )}
         </div>
         <div className="flex flex-col flex-1 p-2.5 sm:p-4 min-w-0">
-          {/* Mobile: source + time + meter inline */}
+          {/* Mobile: source + time + bookmark inline */}
           <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
             <span className="text-[10px] sm:text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
               {article.source}
@@ -120,6 +149,21 @@ export default function ArticleCard({
             <span className="text-[10px] text-gray-400 dark:text-gray-500 sm:hidden">
               {timeAgo(article.pubDate)}
             </span>
+            {onToggleBookmark && (
+              <button
+                className="sm:hidden ml-auto p-0.5 text-gray-400 hover:text-blue-500 transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleBookmark();
+                }}
+                title={isBookmarked ? "Remove bookmark" : "Save for later"}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                </svg>
+              </button>
+            )}
           </div>
           <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {article.title}

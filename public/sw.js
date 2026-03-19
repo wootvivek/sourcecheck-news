@@ -1,4 +1,4 @@
-const CACHE_NAME = "sourcecheck-v2.2";
+const CACHE_NAME = "sourcecheck-v2.4";
 const OFFLINE_URL = "/offline";
 
 // Assets to pre-cache on install
@@ -77,5 +77,35 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => caches.match(request).then((cached) => cached || caches.match(OFFLINE_URL)))
+  );
+});
+
+// Handle messages from client for breaking news notifications
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "BREAKING_NEWS") {
+    self.registration.showNotification(event.data.title, {
+      body: event.data.body,
+      icon: "/icon-192x192.png",
+      badge: "/icon-96x96.png",
+      tag: "breaking-" + (event.data.body || "").slice(0, 20),
+      data: { url: event.data.url },
+      vibrate: [200, 100, 200],
+    });
+  }
+});
+
+// Handle notification clicks
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/";
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((windowClients) => {
+      for (const client of windowClients) {
+        if (client.url.includes("sourcecheck") && "focus" in client) {
+          return client.focus();
+        }
+      }
+      return clients.openWindow(url);
+    })
   );
 });

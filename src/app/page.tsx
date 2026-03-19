@@ -3,6 +3,7 @@
 import ArticleGrid from "@/components/ArticleGrid";
 import CategoryPills from "@/components/CategoryPills";
 import LoadingScreen from "@/components/LoadingScreen";
+import BreakingNewsChecker from "@/components/BreakingNewsChecker";
 import { useArticles } from "@/hooks/useArticles";
 
 export default function HomePage() {
@@ -17,7 +18,10 @@ export default function HomePage() {
       {loading ? (
         <LoadingScreen />
       ) : (
-        <ArticleGrid articles={articles} />
+        <>
+          <BreakingNewsChecker articles={articles} />
+          <ArticleGrid articles={articles} />
+        </>
       )}
     </>
   );

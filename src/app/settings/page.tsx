@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useSettings } from "@/hooks/useSettings";
 import { useViewPreference } from "@/hooks/useViewPreference";
+import { useNotifications } from "@/hooks/useNotifications";
 import { CATEGORIES, ViewMode } from "@/lib/types";
 import { SortOption } from "@/components/SortControl";
 
@@ -34,6 +35,7 @@ export default function SettingsPage() {
   const { settings, updateSettings } = useSettings();
   const { viewMode, setViewMode } = useViewPreference();
   const { theme, setTheme } = useTheme();
+  const notifications = useNotifications();
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -178,6 +180,50 @@ export default function SettingsPage() {
               Tap to hide/show categories in your feed.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Notifications Section */}
+      <section className="mb-8">
+        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
+          Notifications
+        </h2>
+        <div className="space-y-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                🔴 Breaking News Alerts
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Get notified when a story reaches 5+ sources
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                if (notifications.enabled) {
+                  notifications.disable();
+                } else {
+                  notifications.enable();
+                }
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                notifications.enabled
+                  ? "bg-blue-600"
+                  : "bg-gray-300 dark:bg-gray-600"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  notifications.enabled ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+          {notifications.permission === "denied" && (
+            <p className="text-xs text-red-400">
+              Notifications are blocked in your browser. Please enable them in your browser settings.
+            </p>
+          )}
         </div>
       </section>
 

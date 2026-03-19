@@ -7,6 +7,7 @@ import HeatMapGrid from "./HeatMapGrid";
 import TieredView from "./TieredView";
 import { useViewPreference } from "@/hooks/useViewPreference";
 import { useSettings } from "@/hooks/useSettings";
+import { useBookmarks } from "@/hooks/useBookmarks";
 import SortControl, { SortOption } from "./SortControl";
 import ViewToggle from "./ViewToggle";
 
@@ -17,6 +18,7 @@ interface ArticleGridProps {
 export default function ArticleGrid({ articles }: ArticleGridProps) {
   const { viewMode, setViewMode } = useViewPreference();
   const { settings } = useSettings();
+  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const [sort, setSort] = useState<SortOption>("echo");
   const [sortInitialized, setSortInitialized] = useState(false);
 
@@ -76,6 +78,21 @@ export default function ArticleGrid({ articles }: ArticleGridProps) {
             <ArticleCard
               key={article.id}
               article={article}
+              isBookmarked={isBookmarked(article.id)}
+              onToggleBookmark={() => {
+                if (isBookmarked(article.id)) {
+                  removeBookmark(article.id);
+                } else {
+                  addBookmark({
+                    id: article.id,
+                    title: article.title,
+                    source: article.source,
+                    link: article.link,
+                    imageUrl: article.imageUrl,
+                    echoScore: article.echoScore,
+                  });
+                }
+              }}
             />
           ))}
         </div>
