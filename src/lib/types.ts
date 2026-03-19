@@ -53,6 +53,7 @@ export const CATEGORY_COLORS: Record<Category, string> = {
 };
 
 export const CATEGORIES: CategoryInfo[] = [
+  { slug: "local", label: "Local" },
   { slug: "world", label: "World" },
   { slug: "politics", label: "Politics" },
   { slug: "tech", label: "Tech" },
@@ -62,5 +63,4 @@ export const CATEGORIES: CategoryInfo[] = [
   { slug: "science", label: "Science" },
   { slug: "entertainment", label: "Entertainment" },
   { slug: "opinion", label: "Opinion" },
-  { slug: "local", label: "Local" },
 ];

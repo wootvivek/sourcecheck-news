@@ -154,7 +154,7 @@ export default function AboutPage() {
       </div>
 
       <p className="mt-8 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v2.0
+        v2.1
       </p>
     </div>
   );
