@@ -23,65 +23,88 @@ interface SelectedStory {
   reasoning: string;
 }
 
-async function selectTopStories(articles: Article[]): Promise<SelectedStory[]> {
-  // Filter to well-corroborated stories only
-  const candidates = articles
-    .filter((a) => a.echoScore >= 3)
-    .slice(0, 40); // Limit context size
+const TARGET_CATEGORIES = ["world", "local", "tech"] as const;
 
-  if (candidates.length < 3) {
-    // Fallback: use top 3 by echoScore from all articles
-    const fallback = articles
-      .sort((a, b) => b.echoScore - a.echoScore)
-      .slice(0, 3);
-    return fallback.map((a, i) => ({
-      articleIndex: articles.indexOf(a),
-      category: a.category,
-      reasoning: "Top story by source count",
+async function selectTopStories(articles: Article[]): Promise<SelectedStory[]> {
+  // Pick the top story from each target category: World, Local, Tech
+  const selections: SelectedStory[] = [];
+
+  for (const cat of TARGET_CATEGORIES) {
+    // Get candidates for this category, sorted by echoScore
+    const catArticles = articles
+      .filter((a) => a.category === cat && a.echoScore >= 2)
+      .sort((a, b) => b.echoScore - a.echoScore);
+
+    if (catArticles.length === 0) continue;
+
+    // Send top 10 from this category to GPT-4o to pick the most interesting one
+    const candidates = catArticles.slice(0, 10);
+    const summaries = candidates.map((a) => ({
+      index: articles.indexOf(a),
+      title: a.title,
+      description: a.description?.slice(0, 150) || "",
+      echoScore: a.echoScore,
+      sources: a.echoSources.join(", "),
     }));
+
+    const response = await getOpenAI().chat.completions.create({
+      model: "gpt-4o",
+      temperature: 0.7,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `You are a senior editorial AI for SourceCheck.News. Pick the single most interesting and impactful ${cat.toUpperCase()} story from the list below — the one that would make the best analytical opinion piece.
+
+Prefer stories with high echo scores, wide source coverage, and potential for historical depth and future prediction.
+
+Respond with JSON: { "articleIndex": <number from the list>, "reasoning": "<1 sentence>" }`,
+        },
+        {
+          role: "user",
+          content: JSON.stringify(summaries, null, 2),
+        },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) continue;
+
+    try {
+      const parsed = JSON.parse(content);
+      selections.push({
+        articleIndex: parsed.articleIndex,
+        category: cat,
+        reasoning: parsed.reasoning || "Top story",
+      });
+    } catch {
+      // Fallback: just use the highest echoScore article
+      selections.push({
+        articleIndex: articles.indexOf(catArticles[0]),
+        category: cat,
+        reasoning: "Top story by source count",
+      });
+    }
   }
 
-  const summaries = candidates.map((a, i) => ({
-    index: articles.indexOf(a),
-    title: a.title,
-    description: a.description?.slice(0, 150) || "",
-    category: a.category,
-    echoScore: a.echoScore,
-    sources: a.echoSources.join(", "),
-  }));
+  // Fallback if we got fewer than 3 (e.g., no local articles)
+  if (selections.length < 3) {
+    const usedIndices = new Set(selections.map((s) => s.articleIndex));
+    const remaining = articles
+      .filter((a) => !usedIndices.has(articles.indexOf(a)) && a.echoScore >= 3)
+      .sort((a, b) => b.echoScore - a.echoScore);
 
-  const response = await getOpenAI().chat.completions.create({
-    model: "gpt-4o",
-    temperature: 0.7,
-    response_format: { type: "json_object" },
-    messages: [
-      {
-        role: "system",
-        content: `You are a senior editorial AI for SourceCheck.News, a news aggregator tracking 196+ sources.
-Your job: pick the 3 most important, interesting, and impactful stories from today's news for a general audience.
+    for (const a of remaining) {
+      if (selections.length >= 3) break;
+      selections.push({
+        articleIndex: articles.indexOf(a),
+        category: a.category,
+        reasoning: "Fallback: top story by source count",
+      });
+    }
+  }
 
-Rules:
-- Choose stories from AT LEAST 2 different categories (don't pick 3 politics stories)
-- Prefer stories covered by sources across the political spectrum
-- Prefer stories with high echo scores (more independent sources = bigger story)
-- Pick stories that would spark thoughtful analysis, not just breaking news updates
-- One pick can be a "sleeper" — important but underreported
-
-Respond with JSON: { "selections": [ { "articleIndex": <number from the list>, "category": "<string>", "reasoning": "<1 sentence>" } ] }
-Pick exactly 3.`,
-      },
-      {
-        role: "user",
-        content: `Here are today's top stories:\n\n${JSON.stringify(summaries, null, 2)}`,
-      },
-    ],
-  });
-
-  const content = response.choices[0]?.message?.content;
-  if (!content) throw new Error("Empty GPT-4o response for story selection");
-
-  const parsed = JSON.parse(content);
-  return parsed.selections as SelectedStory[];
+  return selections;
 }
 
 // ── Step 2: Generate opinion piece ────────────────────────────────
