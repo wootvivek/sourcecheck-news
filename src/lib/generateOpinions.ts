@@ -171,13 +171,15 @@ Respond with JSON: { "headline": "alarming but factual headline", "summary": "1 
       },
       {
         role: "user",
-        content: `Story category: ${article.category}
+        content: `TODAY'S DATE: ${new Date().toISOString().split("T")[0]} (use this as your reference point — all predictions must be in the future relative to this date)
+
+Story category: ${article.category}
 Echo Score: ${article.echoScore} sources covering this story
 
 Sources covering this story:
 ${clusterArticles.map((a) => `- [${a.source}] (Bias: ${a.biasLabel}) — "${a.title}"\n  ${a.description}`).join("\n\n")}
 
-Write your analysis piece.`,
+Write your analysis piece. Remember: today is ${new Date().toISOString().split("T")[0]}. All predictions and future dates MUST be after today.`,
       },
     ],
   });
@@ -196,21 +198,94 @@ Write your analysis piece.`,
       link: a.link,
     }));
 
+    // ── Fact-check & correction pass ──
+    const verified = await verifyAndCorrect(parsed, article, clusterArticles);
+
     const id = article.id || crypto.createHash("md5").update(article.title).digest("hex").slice(0, 8);
 
     return {
       id,
-      headline: parsed.headline,
-      summary: parsed.summary,
-      content: parsed.content,
+      headline: verified.headline,
+      summary: verified.summary,
+      content: verified.content,
       category: article.category,
-      confidence: Math.max(0, Math.min(100, parsed.confidence ?? 50)),
+      confidence: Math.max(0, Math.min(100, verified.confidence ?? 50)),
       sourceArticles: sourceRefs,
       generatedAt: new Date().toISOString(),
     };
   } catch (e) {
     console.error("[opinions] Failed to parse opinion JSON:", e);
     return null;
+  }
+}
+
+// ── Step 3: Fact-check & hallucination correction ────────────────
+
+async function verifyAndCorrect(
+  draft: { headline: string; summary: string; content: string; confidence: number },
+  article: Article,
+  clusterArticles: { source: string; title: string; description: string; link: string; biasLabel: string }[]
+): Promise<{ headline: string; summary: string; content: string; confidence: number }> {
+  const today = new Date().toISOString().split("T")[0];
+
+  try {
+    const response = await getOpenAI().chat.completions.create({
+      model: "gpt-4o",
+      temperature: 0.2, // Low temperature for precise fact-checking
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `You are a strict fact-checker for SourceCheck.News. Today's date is ${today}.
+
+Your job: Review the AI-generated opinion piece below and FIX any hallucinations or factual errors.
+
+CHECK FOR THESE COMMON ERRORS:
+1. **Wrong dates/years** — Any future prediction must reference dates AFTER ${today}. If the piece says "by early 2024" but today is ${today}, fix it to the correct future date.
+2. **Fabricated events** — If the piece references a specific historical event (with a date), verify it sounds plausible. If it seems made up or the details are wrong, remove or replace it.
+3. **Wrong names/roles** — Check that any named person is associated with the correct role/country/organization based on what the source articles say.
+4. **Contradicting the sources** — The opinion must be grounded in what the source articles actually say. If the piece claims something the sources don't support, remove it.
+5. **Anachronisms** — The piece should be aware that today is ${today}. No references to current events that happened years ago as if they're happening now.
+6. **Impossible claims** — Remove any specific statistics, studies, or quotes that look fabricated (e.g., "a 2019 Harvard study found that..." when no such study is referenced in sources).
+
+If the piece is accurate, return it unchanged. If you find errors, fix them and return the corrected version.
+
+Respond with JSON: { "headline": "...", "summary": "...", "content": "...", "confidence": <number>, "corrections": "brief note of what you fixed, or 'none'" }`,
+        },
+        {
+          role: "user",
+          content: `DRAFT TO FACT-CHECK:
+Headline: ${draft.headline}
+Summary: ${draft.summary}
+Confidence: ${draft.confidence}
+Content:
+${draft.content}
+
+SOURCE ARTICLES (ground truth):
+${clusterArticles.map((a) => `- [${a.source}] "${a.title}" — ${a.description}`).join("\n")}
+
+Check this piece for hallucinations and return the corrected version.`,
+        },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) return draft;
+
+    const verified = JSON.parse(content);
+    if (verified.corrections && verified.corrections !== "none") {
+      console.log(`[opinions] Fact-check corrections: ${verified.corrections}`);
+    }
+
+    return {
+      headline: verified.headline || draft.headline,
+      summary: verified.summary || draft.summary,
+      content: verified.content || draft.content,
+      confidence: verified.confidence ?? draft.confidence,
+    };
+  } catch (e) {
+    console.error("[opinions] Fact-check pass failed, using original:", e);
+    return draft; // If verification fails, use the original
   }
 }
 
