@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORIES } from "@/lib/types";
+import { useSettings } from "@/hooks/useSettings";
 
 export default function CategoryPills() {
   const pathname = usePathname();
+  const { settings } = useSettings();
+  const hiddenSlugs = new Set(settings.hiddenCategories);
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -19,7 +22,7 @@ export default function CategoryPills() {
       >
         All
       </Link>
-      {CATEGORIES.map((cat) => {
+      {CATEGORIES.filter((cat) => !hiddenSlugs.has(cat.slug)).map((cat) => {
         const active = pathname === `/category/${cat.slug}`;
         const isLocal = cat.slug === "local";
         return (
