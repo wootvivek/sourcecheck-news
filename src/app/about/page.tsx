@@ -133,6 +133,10 @@ export default async function AboutPage() {
             <span className="shrink-0">🌙</span>
             <span><strong className="text-gray-900 dark:text-white">Dark Mode</strong> — Light, dark, or system-matched theme</span>
           </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">✨</span>
+            <span><strong className="text-gray-900 dark:text-white">AI Opinion</strong> — GPT-4o analyzes today&apos;s top stories from multiple perspectives with historical context</span>
+          </li>
         </ul>
 
         <hr className="border-gray-200 dark:border-gray-700" />
@@ -172,7 +176,7 @@ export default async function AboutPage() {
       </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v2.9
+        v3.0
       </p>
     </div>
   );

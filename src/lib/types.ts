@@ -37,6 +37,22 @@ export interface CategoryInfo {
   label: string;
 }
 
+export interface OpinionSourceRef {
+  title: string;
+  source: string;
+  link: string;
+}
+
+export interface OpinionPiece {
+  id: string;
+  headline: string;
+  summary: string;
+  content: string;
+  category: Category;
+  sourceArticles: OpinionSourceRef[];
+  generatedAt: string;
+}
+
 export type ViewMode = "grid" | "heatmap";
 
 export const CATEGORY_COLORS: Record<Category, string> = {
