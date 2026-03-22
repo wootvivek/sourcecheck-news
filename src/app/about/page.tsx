@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getLastRefreshed } from "@/lib/kvCache";
 
-export const revalidate = 300; // Re-fetch last refresh time every 5 minutes
+export const dynamic = "force-dynamic"; // Always fetch fresh lastRefreshed from Redis
 
 export const metadata: Metadata = {
   title: "About – SourceCheck.News",
@@ -172,7 +172,7 @@ export default async function AboutPage() {
       </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v2.8
+        v2.9
       </p>
     </div>
   );
