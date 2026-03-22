@@ -55,7 +55,9 @@ export default async function AiOpinionPage() {
             hour: "numeric",
             minute: "2-digit",
             hour12: true,
+            timeZone: "UTC",
           })}
+          {" UTC"}
           {" "}— no coffee breaks, just vibes and vectors.
         </p>
       )}

@@ -137,6 +137,22 @@ export default async function AboutPage() {
             <span className="shrink-0">✨</span>
             <span><strong className="text-gray-900 dark:text-white">AI Opinion</strong> — GPT-4o analyzes today&apos;s top stories from multiple perspectives with historical context</span>
           </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔖</span>
+            <span><strong className="text-gray-900 dark:text-white">Bookmarks</strong> — Save stories to read later, stored locally on your device</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔥</span>
+            <span><strong className="text-gray-900 dark:text-white">Streak Counter</strong> — Track your consecutive daily visits and build a news reading habit</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">🔔</span>
+            <span><strong className="text-gray-900 dark:text-white">Breaking News Alerts</strong> — Push notifications when a story hits 5+ sources</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="shrink-0">📱</span>
+            <span><strong className="text-gray-900 dark:text-white">PWA</strong> — Install as an app on iOS or Android, with offline support</span>
+          </li>
         </ul>
 
         <hr className="border-gray-200 dark:border-gray-700" />
@@ -170,13 +186,13 @@ export default async function AboutPage() {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
-              timeZoneName: "short",
-            })
+              timeZone: "UTC",
+            }) + " UTC"
           : "Waiting for first refresh…"}
       </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v3.0
+        v3.1
       </p>
     </div>
   );
