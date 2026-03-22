@@ -172,7 +172,7 @@ export default async function AboutPage() {
       </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v2.7
+        v2.8
       </p>
     </div>
   );
