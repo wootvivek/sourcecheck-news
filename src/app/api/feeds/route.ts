@@ -42,10 +42,13 @@ export async function GET(request: NextRequest) {
   // Fallback: live fetch + cluster (slow path, only on cold start or KV unavailable)
   const articles = await fetchAndClusterAll(category || undefined);
 
-  // Try to store in KV for next request
+  // Store in KV for next request (2 hour TTL) + update lastRefreshed
   try {
     const kvKey = category ? `feeds:${category}` : "feeds:all";
-    await kv.set(kvKey, JSON.stringify(articles), { ex: 900 });
+    await Promise.all([
+      kv.set(kvKey, JSON.stringify(articles), { ex: 7200 }),
+      kv.set("feeds:lastRefreshed", new Date().toISOString()),
+    ]);
   } catch {
     // KV not available — that's fine
   }
