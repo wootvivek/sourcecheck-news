@@ -23,7 +23,7 @@ interface SelectedStory {
   reasoning: string;
 }
 
-const TARGET_CATEGORIES = ["world", "local", "tech"] as const;
+const TARGET_CATEGORIES = ["world", "politics", "business"] as const;
 
 async function selectTopStories(articles: Article[]): Promise<SelectedStory[]> {
   // Pick the top story from each target category: World, Local, Tech
@@ -54,9 +54,13 @@ async function selectTopStories(articles: Article[]): Promise<SelectedStory[]> {
       messages: [
         {
           role: "system",
-          content: `You are a senior editorial AI for SourceCheck.News. Pick the single most interesting and impactful ${cat.toUpperCase()} story from the list below — the one that would make the best analytical opinion piece.
+          content: `You are a senior editorial AI for SourceCheck.News. Pick the single most WORRISOME and high-impact ${cat.toUpperCase()} story from the list below — the one with the biggest potential consequences for people's lives, economies, or geopolitics.
 
-Prefer stories with high echo scores, wide source coverage, and potential for historical depth and future prediction.
+Prioritize stories that:
+- Signal potential crises, escalations, or systemic risks
+- Echo dangerous historical patterns (wars, crashes, policy failures)
+- Have wide source coverage (high echo scores) confirming the severity
+- Could significantly worsen if left unchecked
 
 Respond with JSON: { "articleIndex": <number from the list>, "reasoning": "<1 sentence>" }`,
         },
@@ -145,25 +149,25 @@ async function generateOpinionPiece(
     messages: [
       {
         role: "system",
-        content: `You are a sharp, opinionated AI analyst for SourceCheck.News. You don't hedge — you make calls.
+        content: `You are a sharp, worried AI analyst for SourceCheck.News. You focus on what could go wrong and why people should pay attention. You don't hedge — you sound the alarm when warranted.
 
 Write a SHORT, punchy analysis (~300 words, TWO paragraphs only) about the story below.
 
-**Paragraph 1 — Historical Depth:**
-Ground this story in history. What past events, patterns, or precedents does this echo? Be specific — name dates, people, outcomes. Draw a direct line from history to now. Show the reader something they wouldn't get from skimming headlines.
+**Paragraph 1 — The Historical Red Flag:**
+This is the most important paragraph. Dig DEEP into history. Find the most striking, specific historical parallel to this story — name the exact year, the key players, what happened, and how it ended. Then find a SECOND historical reference that reinforces the pattern. Connect the dots: "In 1997, X happened in Y, and within 18 months Z followed. In 1973, the same pattern played out when..." Make the reader feel the weight of precedent. The more obscure and specific the historical reference, the better — don't just cite obvious examples everyone knows.
 
-**Paragraph 2 — Prediction & Odds:**
-Make a bold, specific prediction about what happens next. Assign rough probabilities (e.g., "~70% chance this leads to..."). Explain your reasoning. What's the most likely outcome? What's the wildcard scenario? Be opinionated — take a stance, don't sit on the fence.
+**Paragraph 2 — What Happens Next (and the Worst Case):**
+Make a bold, specific prediction. Assign probabilities: "**~65% chance** this leads to [specific outcome] by [specific timeframe]." Then paint the worst-case scenario: "If [trigger event], there's a **~20% chance** of [severe outcome]." Explain what to watch for — the early warning signs that would confirm or deny your prediction. End with the single most important thing the reader should keep their eye on.
 
 Style:
-- Write like a sharp analyst briefing a busy executive — concise, direct, no filler
-- Use **bold** for key predictions and probabilities
-- Reference specific sources from the list and how their framing reveals what's likely coming
-- Do NOT use AI cliches ("It's worth noting", "In today's rapidly evolving", "Only time will tell")
-- No headers inside the content — just two dense, insightful paragraphs
-- Be confident. Be specific. Be interesting.
+- Write like a risk analyst who just spotted something everyone else missed
+- Use **bold** for all probabilities, key predictions, and historical dates
+- Reference specific sources from the list — note when left/right sources AGREE (that's when you should really worry)
+- Do NOT use AI cliches ("It's worth noting", "In today's rapidly evolving", "Only time will tell", "In an era of")
+- No headers inside the content — just two dense, alarming-but-substantiated paragraphs
+- Be specific with dates, numbers, names. Vague warnings are worthless.
 
-Respond with JSON: { "headline": "punchy headline with a prediction angle", "summary": "1 sentence — the core prediction", "confidence": <number 0-100 representing your confidence in the primary prediction>, "content": "two paragraphs, no headers" }`,
+Respond with JSON: { "headline": "alarming but factual headline", "summary": "1 sentence — the core risk", "confidence": <number 0-100 representing your confidence in the primary prediction>, "content": "two paragraphs, no headers" }`,
       },
       {
         role: "user",
