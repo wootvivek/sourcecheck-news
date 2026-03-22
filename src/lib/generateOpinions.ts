@@ -140,7 +140,7 @@ Style:
 - No headers inside the content — just two dense, insightful paragraphs
 - Be confident. Be specific. Be interesting.
 
-Respond with JSON: { "headline": "punchy headline with a prediction angle", "summary": "1 sentence — the core prediction", "content": "two paragraphs, no headers" }`,
+Respond with JSON: { "headline": "punchy headline with a prediction angle", "summary": "1 sentence — the core prediction", "confidence": <number 0-100 representing your confidence in the primary prediction>, "content": "two paragraphs, no headers" }`,
       },
       {
         role: "user",
@@ -177,6 +177,7 @@ Write your analysis piece.`,
       summary: parsed.summary,
       content: parsed.content,
       category: article.category,
+      confidence: Math.max(0, Math.min(100, parsed.confidence ?? 50)),
       sourceArticles: sourceRefs,
       generatedAt: new Date().toISOString(),
     };

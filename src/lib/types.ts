@@ -49,6 +49,7 @@ export interface OpinionPiece {
   summary: string;
   content: string;
   category: Category;
+  confidence: number; // 0-100, prediction confidence percentage
   sourceArticles: OpinionSourceRef[];
   generatedAt: string;
 }
