@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import useSWR from "swr";
 import SearchBar from "./SearchBar";
 import ThemeToggle from "./ThemeToggle";
 import { useStreak } from "@/hooks/useStreak";
@@ -96,6 +97,46 @@ function NavDog() {
   );
 }
 
+const opinionsFetcher = (url: string) => fetch(url).then((r) => r.json());
+
+function AiOpinionLink() {
+  const { data } = useSWR("/api/opinions", opinionsFetcher, {
+    refreshInterval: 5 * 60_000,
+    dedupingInterval: 60_000,
+  });
+  const hasOpinions = data?.opinions?.length > 0;
+
+  return (
+    <Link
+      href="/ai-opinion"
+      className={`relative p-1.5 sm:p-2 rounded-lg transition-colors ${
+        hasOpinions
+          ? "text-purple-500 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+          : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400"
+      }`}
+      title="AI Opinion"
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={hasOpinions ? "animate-sparkle-shine" : ""}
+      >
+        <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
+        <path d="M20 10l.7 2.1L23 13l-2.3.9L20 16l-.7-2.1L17 13l2.3-.9L20 10z" />
+      </svg>
+      {hasOpinions && (
+        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+      )}
+    </Link>
+  );
+}
+
 export default function Navbar() {
   const streak = useStreak();
   const [showStreak, setShowStreak] = useState(false);
@@ -129,12 +170,7 @@ export default function Navbar() {
               <SearchBar />
             </div>
             {/* AI Opinion */}
-            <Link href="/ai-opinion" className="p-1.5 sm:p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" title="AI Opinion">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
-                <path d="M20 10l.7 2.1L23 13l-2.3.9L20 16l-.7-2.1L17 13l2.3-.9L20 10z" />
-              </svg>
-            </Link>
+            <AiOpinionLink />
             {/* Bookmarks */}
             <Link href="/bookmarks" className="p-1.5 sm:p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Saved Stories">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
