@@ -45,6 +45,21 @@ export default async function AiOpinionPage() {
         </p>
       </div>
 
+      {/* Timestamp + fun string */}
+      {generatedAt && (
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mb-3">
+          🤖 Our robot columnist filed these pieces{" "}
+          {new Date(generatedAt).toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })}
+          {" "}— no coffee breaks, just vibes and vectors.
+        </p>
+      )}
+
       {/* AI Disclaimer */}
       <div className="mb-6 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800/50">
         <p className="text-xs text-purple-700 dark:text-purple-300 text-center">
