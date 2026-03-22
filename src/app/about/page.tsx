@@ -1,5 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getLastRefreshed } from "@/lib/kvCache";
+
+export const revalidate = 300; // Re-fetch last refresh time every 5 minutes
 
 export const metadata: Metadata = {
   title: "About – SourceCheck.News",
@@ -52,7 +55,8 @@ function AboutDog() {
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const lastRefreshed = await getLastRefreshed();
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="flex flex-col items-center text-center mb-10">
@@ -153,8 +157,21 @@ export default function AboutPage() {
         </Link>
       </div>
 
-      <p className="mt-8 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v2.5
+      {lastRefreshed && (
+        <p className="mt-6 text-center text-[11px] text-gray-400 dark:text-gray-600">
+          Data last refreshed: {new Date(lastRefreshed).toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZoneName: "short",
+          })}
+        </p>
+      )}
+
+      <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
+        v2.6
       </p>
     </div>
   );

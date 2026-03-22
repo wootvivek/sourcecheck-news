@@ -19,8 +19,9 @@ export async function GET(request: NextRequest) {
     // Fetch and cluster all feeds
     const allArticles = await fetchAndClusterAll();
 
-    // Store all articles
+    // Store all articles + last refresh timestamp
     await kv.set("feeds:all", JSON.stringify(allArticles), { ex: 900 }); // 15 min TTL
+    await kv.set("feeds:lastRefreshed", new Date().toISOString());
 
     // Store per-category slices (skip "local" — it's per-user, not pre-computed)
     for (const cat of CATEGORIES) {

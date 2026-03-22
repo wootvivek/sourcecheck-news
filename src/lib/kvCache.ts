@@ -23,3 +23,15 @@ export async function getArticlesFromKV(
     return null;
   }
 }
+
+/**
+ * Get the timestamp of the last successful cron refresh.
+ */
+export async function getLastRefreshed(): Promise<string | null> {
+  try {
+    return await kv.get<string>("feeds:lastRefreshed");
+  } catch (e) {
+    console.log("[kvCache] KV lastRefreshed read failed:", e);
+    return null;
+  }
+}
