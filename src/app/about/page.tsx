@@ -92,6 +92,10 @@ export default async function AboutPage() {
 
         <ul className="space-y-3 text-[15px]">
           <li className="flex gap-2">
+            <span className="shrink-0">✨</span>
+            <span><strong className="text-gray-900 dark:text-white">AI Opinion</strong> — GPT-4o picks today&apos;s most impactful stories across World, Politics, and Finance, then writes sharp two-paragraph analyses with deep historical parallels and bold predictions. Every piece goes through a second AI fact-check pass that catches hallucinated dates, fabricated events, and source contradictions before publishing.</span>
+          </li>
+          <li className="flex gap-2">
             <span className="shrink-0">📊</span>
             <span><strong className="text-gray-900 dark:text-white">Source Scoring</strong> — Every story scored 1&ndash;5 based on how many independent newsrooms are covering it</span>
           </li>
@@ -132,10 +136,6 @@ export default async function AboutPage() {
           <li className="flex gap-2">
             <span className="shrink-0">🌙</span>
             <span><strong className="text-gray-900 dark:text-white">Dark Mode</strong> — Light, dark, or system-matched theme</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="shrink-0">✨</span>
-            <span><strong className="text-gray-900 dark:text-white">AI Opinion</strong> — GPT-4o analyzes today&apos;s top stories from multiple perspectives with historical context</span>
           </li>
           <li className="flex gap-2">
             <span className="shrink-0">🔖</span>
@@ -192,7 +192,7 @@ export default async function AboutPage() {
       </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
-        v3.1
+        v3.2
       </p>
     </div>
   );
