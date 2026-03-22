@@ -105,14 +105,36 @@ function AiOpinionLink() {
     dedupingInterval: 60_000,
   });
   const hasOpinions = data?.opinions?.length > 0;
+  const serverGeneratedAt = data?.generatedAt || null;
+
+  // Track read/unread: store the generatedAt timestamp the user last saw
+  const [isUnread, setIsUnread] = useState(false);
+
+  useEffect(() => {
+    if (!serverGeneratedAt) return;
+    const lastSeen = localStorage.getItem("ai-opinion-last-seen");
+    setIsUnread(lastSeen !== serverGeneratedAt);
+  }, [serverGeneratedAt]);
+
+  const handleClick = () => {
+    if (serverGeneratedAt) {
+      localStorage.setItem("ai-opinion-last-seen", serverGeneratedAt);
+      setIsUnread(false);
+    }
+  };
+
+  const showGlow = hasOpinions && isUnread;
 
   return (
     <Link
       href="/ai-opinion"
+      onClick={handleClick}
       className={`relative p-1.5 sm:p-2 rounded-lg transition-colors ${
-        hasOpinions
+        showGlow
           ? "text-purple-500 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30"
-          : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400"
+          : hasOpinions
+            ? "text-purple-500/60 dark:text-purple-400/60 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+            : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400"
       }`}
       title="AI Opinion"
     >
@@ -125,12 +147,12 @@ function AiOpinionLink() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={hasOpinions ? "animate-sparkle-shine" : ""}
+        className={showGlow ? "animate-sparkle-shine" : ""}
       >
         <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z" />
         <path d="M20 10l.7 2.1L23 13l-2.3.9L20 16l-.7-2.1L17 13l2.3-.9L20 10z" />
       </svg>
-      {hasOpinions && (
+      {showGlow && (
         <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
       )}
     </Link>
