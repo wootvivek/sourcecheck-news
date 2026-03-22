@@ -1,9 +1,44 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
 import ThemeToggle from "./ThemeToggle";
 import { useStreak } from "@/hooks/useStreak";
+
+function StreakPopup({ streak, onClose }: { streak: ReturnType<typeof useStreak>; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  const getMessage = () => {
+    if (streak.currentStreak >= 30) return "Legendary! You're a news machine! 🏆";
+    if (streak.currentStreak >= 14) return "Two weeks strong! Unstoppable! 💪";
+    if (streak.currentStreak >= 7) return "A full week! You're on fire! 🔥";
+    if (streak.currentStreak >= 3) return "Nice streak! Keep it going! ⚡";
+    return "You're building a habit! 🌱";
+  };
+
+  return (
+    <div ref={ref} className="absolute top-full mt-2 right-0 sm:left-1/2 sm:-translate-x-1/2 z-50 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 animate-in fade-in slide-in-from-top-2">
+      <div className="text-center">
+        <div className="text-3xl mb-1">🔥</div>
+        <div className="text-lg font-bold text-gray-900 dark:text-white">{streak.currentStreak}-day streak!</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{getMessage()}</div>
+        <div className="mt-3 space-y-1 text-[11px] text-gray-400 dark:text-gray-500">
+          <div>🏅 Longest streak: <span className="font-semibold text-gray-600 dark:text-gray-300">{streak.longestStreak} days</span></div>
+          <div>📰 Total visits: <span className="font-semibold text-gray-600 dark:text-gray-300">{streak.totalVisits}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function NavDog() {
   return (
@@ -63,6 +98,7 @@ function NavDog() {
 
 export default function Navbar() {
   const streak = useStreak();
+  const [showStreak, setShowStreak] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
@@ -76,9 +112,12 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white leading-tight truncate">SourceCheck<span className="text-blue-600 dark:text-blue-400">.News</span></span>
                 {streak.currentStreak > 1 && (
-                  <span className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full shrink-0" title={`${streak.currentStreak}-day streak! Longest: ${streak.longestStreak}`}>
-                    🔥 {streak.currentStreak}
-                  </span>
+                  <div className="relative hidden sm:block">
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowStreak(!showStreak); }} className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full shrink-0 hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-colors cursor-pointer">
+                      🔥 {streak.currentStreak}
+                    </button>
+                    {showStreak && <StreakPopup streak={streak} onClose={() => setShowStreak(false)} />}
+                  </div>
                 )}
               </div>
               <span className="hidden sm:block text-[10px] text-gray-400 dark:text-gray-500 font-medium tracking-wide group-hover/brand:text-blue-500 transition-colors">See how many sources agree before you believe.</span>
@@ -118,9 +157,12 @@ export default function Navbar() {
             <SearchBar />
           </div>
           {streak.currentStreak > 1 && (
-            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full shrink-0">
-              🔥 {streak.currentStreak}
-            </span>
+            <div className="relative">
+              <button onClick={() => setShowStreak(!showStreak)} className="inline-flex items-center gap-0.5 text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full shrink-0 hover:bg-orange-100 dark:hover:bg-orange-900/50 transition-colors cursor-pointer">
+                🔥 {streak.currentStreak}
+              </button>
+              {showStreak && <StreakPopup streak={streak} onClose={() => setShowStreak(false)} />}
+            </div>
           )}
         </div>
       </div>
