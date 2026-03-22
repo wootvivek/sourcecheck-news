@@ -60,7 +60,11 @@ function deduplicateClusters(articles: Article[]): Article[] {
   return articles.filter((a) => !hideIds.has(a.id));
 }
 
-export function useArticles(category?: Category, city?: string) {
+export function useArticles(
+  category?: Category,
+  city?: string,
+  fallbackData?: Article[] | null
+) {
   const url = category === "local"
     ? city
       ? `/api/feeds?category=local&city=${encodeURIComponent(city)}`
@@ -75,6 +79,7 @@ export function useArticles(category?: Category, city?: string) {
     dedupingInterval: 60_000, // dedupe requests within 60s
     refreshInterval: 5 * 60_000, // auto-refresh every 5 min in background
     keepPreviousData: true, // show stale data while refreshing
+    fallbackData: fallbackData ?? undefined,
   });
 
   const articles = data ? deduplicateClusters(data) : [];

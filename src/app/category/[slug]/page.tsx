@@ -1,80 +1,18 @@
-"use client";
+import { getArticlesFromKV } from "@/lib/kvCache";
+import CategoryContent from "@/components/CategoryContent";
+import { Category } from "@/lib/types";
 
-import { useParams } from "next/navigation";
-import { CATEGORIES, Category } from "@/lib/types";
-import ArticleGrid from "@/components/ArticleGrid";
-import CategoryPills from "@/components/CategoryPills";
-import LoadingScreen from "@/components/LoadingScreen";
-import LocationPrompt from "@/components/LocationPrompt";
-import { useArticles } from "@/hooks/useArticles";
-import { useLocation } from "@/hooks/useLocation";
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const category = slug as Category;
 
-export default function CategoryPage() {
-  const params = useParams();
-  const slug = params.slug as Category;
-  const {
-    location,
-    loading: locationLoading,
-    error: locationError,
-    requestLocation,
-    setManualCity,
-    clearLocation,
-  } = useLocation();
+  // Local news is per-user (needs city), so no server-side prefetch
+  const initialArticles =
+    category === "local" ? null : await getArticlesFromKV(category);
 
-  const isLocal = slug === "local";
-  const city = isLocal ? location?.city : undefined;
-  const { articles, loading } = useArticles(slug, city);
-
-  const categoryInfo = CATEGORIES.find((c) => c.slug === slug);
-
-  return (
-    <>
-      <CategoryPills />
-
-      {isLocal ? (
-        <>
-          <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-white">
-            {location ? `📍 Local — ${location.city}` : "📍 Local News"}
-          </h1>
-          {!location ? (
-            <LocationPrompt
-              location={null}
-              loading={locationLoading}
-              error={locationError}
-              onRequestLocation={requestLocation}
-              onManualCity={setManualCity}
-              onClearLocation={clearLocation}
-            />
-          ) : loading ? (
-            <LoadingScreen />
-          ) : (
-            <>
-              <div className="mb-4">
-                <LocationPrompt
-                  location={location}
-                  loading={locationLoading}
-                  error={locationError}
-                  onRequestLocation={requestLocation}
-                  onManualCity={setManualCity}
-                  onClearLocation={clearLocation}
-                />
-              </div>
-              <ArticleGrid articles={articles} />
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          <h1 className="text-2xl font-bold mt-6 mb-4 text-gray-900 dark:text-white">
-            {categoryInfo?.label || slug}
-          </h1>
-          {loading ? (
-            <LoadingScreen />
-          ) : (
-            <ArticleGrid articles={articles} />
-          )}
-        </>
-      )}
-    </>
-  );
+  return <CategoryContent slug={category} initialArticles={initialArticles} />;
 }
