@@ -157,18 +157,19 @@ export default async function AboutPage() {
         </Link>
       </div>
 
-      {lastRefreshed && (
-        <p className="mt-6 text-center text-[11px] text-gray-400 dark:text-gray-600">
-          Data last refreshed: {new Date(lastRefreshed).toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-            timeZoneName: "short",
-          })}
-        </p>
-      )}
+      <p className="mt-6 text-center text-[11px] text-gray-400 dark:text-gray-600">
+        Data last refreshed:{" "}
+        {lastRefreshed
+          ? new Date(lastRefreshed).toLocaleString("en-US", {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+              timeZoneName: "short",
+            })
+          : "Waiting for first refresh…"}
+      </p>
 
       <p className="mt-2 text-center text-[11px] text-gray-300 dark:text-gray-700">
         v2.6
