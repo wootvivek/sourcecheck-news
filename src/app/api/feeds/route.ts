@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import redis from "@/lib/redis";
 import { fetchAndClusterAll } from "@/lib/fetchAndCluster";
 import { fetchLocalNews } from "@/lib/localFeeds";
 import { getArticlesFromKV } from "@/lib/kvCache";
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Try reading from KV cache first (instant)
+  // Try reading from Redis cache first (instant)
   const cached = await getArticlesFromKV(category || undefined);
   if (cached) {
     return NextResponse.json(cached, {
@@ -39,18 +39,18 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  // Fallback: live fetch + cluster (slow path, only on cold start or KV unavailable)
+  // Fallback: live fetch + cluster (slow path, only on cold start or Redis unavailable)
   const articles = await fetchAndClusterAll(category || undefined);
 
-  // Store in KV for next request (2 hour TTL) + update lastRefreshed
+  // Store in Redis for next request (2 hour TTL) + update lastRefreshed
   try {
     const kvKey = category ? `feeds:${category}` : "feeds:all";
     await Promise.all([
-      kv.set(kvKey, JSON.stringify(articles), { ex: 7200 }),
-      kv.set("feeds:lastRefreshed", new Date().toISOString()),
+      redis.set(kvKey, JSON.stringify(articles), "EX", 7200),
+      redis.set("feeds:lastRefreshed", new Date().toISOString()),
     ]);
   } catch {
-    // KV not available — that's fine
+    // Redis not available — that's fine
   }
 
   return NextResponse.json(articles, {

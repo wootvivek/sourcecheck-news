@@ -1,9 +1,9 @@
-import { kv } from "@vercel/kv";
+import redis from "@/lib/redis";
 import { Article, Category } from "@/lib/types";
 
 /**
- * Read articles from Vercel KV cache.
- * Returns null if cache is empty or KV is unavailable.
+ * Read articles from Redis cache.
+ * Returns null if cache is empty or Redis is unavailable.
  */
 export async function getArticlesFromKV(
   category?: Category
@@ -11,15 +11,13 @@ export async function getArticlesFromKV(
   const kvKey = category ? `feeds:${category}` : "feeds:all";
 
   try {
-    const cached = await kv.get<string>(kvKey);
+    const cached = await redis.get(kvKey);
     if (cached) {
-      const articles =
-        typeof cached === "string" ? JSON.parse(cached) : cached;
-      return articles as Article[];
+      return JSON.parse(cached) as Article[];
     }
     return null;
   } catch (e) {
-    console.log("[kvCache] KV read failed:", e);
+    console.log("[kvCache] Redis read failed:", e);
     return null;
   }
 }
@@ -29,9 +27,9 @@ export async function getArticlesFromKV(
  */
 export async function getLastRefreshed(): Promise<string | null> {
   try {
-    return await kv.get<string>("feeds:lastRefreshed");
+    return await redis.get("feeds:lastRefreshed");
   } catch (e) {
-    console.log("[kvCache] KV lastRefreshed read failed:", e);
+    console.log("[kvCache] Redis lastRefreshed read failed:", e);
     return null;
   }
 }
