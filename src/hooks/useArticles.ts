@@ -73,7 +73,7 @@ export function useArticles(
       ? `/api/feeds?category=${category}`
       : "/api/feeds";
 
-  const { data, error, isLoading, mutate } = useSWR<Article[]>(url, fetcher, {
+  const { data, error, isLoading, isValidating, mutate } = useSWR<Article[]>(url, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: true,
     dedupingInterval: 60_000, // dedupe requests within 60s
@@ -87,6 +87,7 @@ export function useArticles(
   return {
     articles,
     loading: isLoading,
+    refreshing: isValidating && !isLoading,
     error,
     refresh: mutate,
   };
